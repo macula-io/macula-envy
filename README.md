@@ -1,7 +1,7 @@
-# Envy
+# Macula Envy
 
-[![Hex.pm](https://img.shields.io/hexpm/v/envy.svg)](https://hex.pm/packages/envy)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-blue.svg)](https://hexdocs.pm/envy)
+[![Hex.pm](https://img.shields.io/hexpm/v/macula_envy.svg)](https://hex.pm/packages/macula_envy)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-blue.svg)](https://hexdocs.pm/macula_envy)
 
 **Environment configuration made simple for Erlang/OTP applications.**
 
@@ -26,13 +26,15 @@ Envy is a simple wrapper over both `os:getenv` and `application:get_env` which:
 
 ## Installation
 
-Add `envy` to your `rebar.config` dependencies:
+Add `macula_envy` to your `rebar.config` dependencies:
 
 ```erlang
 {deps, [
-    {envy, "0.1.0"}
+    {macula_envy, "0.1.0"}
 ]}.
 ```
+
+**Note:** The hex package is named `macula_envy`, but the OTP application is `envy` for compatibility with the original API.
 
 ## Usage
 
@@ -65,7 +67,6 @@ erl -kernel http_port 8080
 Envy provides type-safe access to configuration from either source:
 
 ```shell
-cd envy
 KERNEL_HTTP_PORT=8080 rebar3 shell
 ```
 
@@ -157,5 +158,5 @@ Apache-2.0
 
 - [Original Repository](https://github.com/shortishly/envy) - Peter Morgan's original implementation
 - [Macula Platform](https://github.com/macula-io/macula) - HTTP/3 mesh networking platform
-- [Hex.pm Package](https://hex.pm/packages/envy)
-- [Documentation](https://hexdocs.pm/envy)
+- [Hex.pm Package](https://hex.pm/packages/macula_envy)
+- [Documentation](https://hexdocs.pm/macula_envy)

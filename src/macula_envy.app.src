@@ -1,4 +1,4 @@
-{application, envy, [
+{application, macula_envy, [
     {description, "Environment variable wrapper prefixing with application name"},
     {vsn, "0.1.0"},
     {registered, []},
@@ -10,5 +10,5 @@
     {env, []},
     {modules, []},
     {licenses, ["Apache-2.0"]},
-    {links, [{"GitHub", "https://github.com/macula-io/envy"}]}
+    {links, [{"GitHub", "https://github.com/macula-io/macula-envy"}]}
 ]}.
