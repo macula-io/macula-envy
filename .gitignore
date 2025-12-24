@@ -16,7 +16,8 @@ elvis
 elvis.config
 erl_crash.dump
 logs
-rebar.config
+rebar.lock
+_build
 recompile.log
 relx
 test/*.beam
