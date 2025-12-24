@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2024-12-24
+
+### Fixed
+- Added extras to ex_doc config so README.md appears in hexdocs
+
 ## [0.1.0] - 2024-12-24
 
 ### Added
