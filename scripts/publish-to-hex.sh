@@ -15,7 +15,7 @@ echo "============================================"
 echo ""
 
 # Version check
-PACKAGE_VERSION=$(grep -oP '(?<={vsn, ")[^"]+' src/envy.app.src)
+PACKAGE_VERSION=$(grep -oP '(?<={vsn, ")[^"]+' src/macula_envy.app.src)
 echo "Version: $PACKAGE_VERSION"
 echo ""
 
