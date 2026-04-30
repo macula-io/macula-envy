@@ -157,6 +157,6 @@ Apache-2.0
 ## Links
 
 - [Original Repository](https://github.com/shortishly/envy) - Peter Morgan's original implementation
-- [Macula Platform](https://github.com/macula-io/macula) - HTTP/3 mesh networking platform
+- [Macula Platform](https://codeberg.org/macula-io/macula) - HTTP/3 mesh networking platform
 - [Hex.pm Package](https://hex.pm/packages/macula_envy)
 - [Documentation](https://hexdocs.pm/macula_envy)
