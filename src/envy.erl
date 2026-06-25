@@ -71,28 +71,9 @@ get_env(Application, Key, FullStrategy) ->
     ?FUNCTION_NAME(Application, Key, FullStrategy, undefined).
 
 get_env(Application, Key, [os_env | T], Default) ->
-    case os:getenv(
-           string:uppercase(
-             lists:concat(
-               lists:join(
-                 "_",
-                 case lists:prefix(
-                        any:to_list(Application),
-                        string:to_upper(any:to_list(Key))) of
-
-                     true ->
-                         [Key];
-
-                     false ->
-                         [Application, Key]
-                 end)))) of
-
-        false ->
-            ?FUNCTION_NAME(Application, Key, T, Default);
-
-        Value ->
-            Value
-    end;
+    Parts = env_name_parts(Application, Key),
+    VarName = string:uppercase(lists:concat(lists:join("_", Parts))),
+    os_env_value(os:getenv(VarName), Application, Key, T, Default);
 
 get_env(Application, Key, [app_env | T], Default) ->
     case application:get_env(Application, Key) of
@@ -111,6 +92,23 @@ get_env(_Application, _Key, [], Default) when is_function(Default) ->
 
 get_env(_Application, _Key, [], Default) ->
     Default.
+
+
+env_name_parts(Application, Key) ->
+    Prefixed = lists:prefix(any:to_list(Application),
+                            string:to_upper(any:to_list(Key))),
+    env_name_parts(Prefixed, Application, Key).
+
+env_name_parts(true, _Application, Key) ->
+    [Key];
+env_name_parts(false, Application, Key) ->
+    [Application, Key].
+
+
+os_env_value(false, Application, Key, T, Default) ->
+    get_env(Application, Key, T, Default);
+os_env_value(Value, _Application, _Key, _T, _Default) ->
+    Value.
 
 
 start() ->

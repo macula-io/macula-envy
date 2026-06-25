@@ -40,33 +40,10 @@ debug_options(M, Options) ->
 
 
 debug_options(M, Suffix, [log = Option | Options], A) ->
-    case envy:envy(#{caller => M,
-                     default => false,
-                     names => [Suffix, Option]}) of
-        true ->
-            try
-                ?FUNCTION_NAME(
-                   M,
-                   Suffix,
-                   Options,
-                   [{log,
-                     envy:envy(
-                       #{caller => M,
-                         to => to_integer,
-                         names => [Suffix, Option, n]})} | A])
-            catch
-                error:badarg ->
-                    ?FUNCTION_NAME(
-                       M,
-                       Suffix,
-                       Options,
-                       [log | A])
-
-            end;
-
-        false ->
-            ?FUNCTION_NAME(M, Suffix, Options, A)
-    end;
+    Enabled = envy:envy(#{caller => M,
+                          default => false,
+                          names => [Suffix, Option]}),
+    debug_log_option(Enabled, M, Suffix, Option, Options, A);
 
 debug_options(M, Suffix, [Option | Options], A) ->
     ?FUNCTION_NAME(
@@ -80,6 +57,25 @@ debug_options(M, Suffix, [Option | Options], A) ->
 
 debug_options(_, _, [], A) ->
     A.
+
+
+debug_log_option(true, M, Suffix, Option, Options, A) ->
+    try
+        debug_options(
+          M,
+          Suffix,
+          Options,
+          [{log,
+            envy:envy(
+              #{caller => M,
+                to => to_integer,
+                names => [Suffix, Option, n]})} | A])
+    catch
+        error:badarg ->
+            debug_options(M, Suffix, Options, [log | A])
+    end;
+debug_log_option(false, M, Suffix, _Option, Options, A) ->
+    debug_options(M, Suffix, Options, A).
 
 
 hibernate_after(M) ->
