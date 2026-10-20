@@ -36,6 +36,12 @@ Add `macula_envy` to your `rebar.config` dependencies:
 
 **Note:** The hex package is named `macula_envy`, but the OTP application is `envy` for compatibility with the original API.
 
+## Building
+
+rebar3 is the build. `rebar3 compile` builds it, `rebar3 eunit` runs its 24 tests, and CI runs both on every push.
+
+The Makefile and the vendored `erlang.mk` were upstream shortishly/envy's build, and they are gone: that erlang.mk was from 2019 and its dependency generator calls `file:pid2name/1`, which OTP has removed, so `make` could not run on any current release. Regenerating it did build, but `make` then rewrote this repository's `rebar.config` with a generated one and took the hex, ex_doc and elvis configuration with it. One build system, and it is the one this fork exists for.
+
 ## Usage
 
 ### Basic Type Conversion

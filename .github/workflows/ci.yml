@@ -1,0 +1,71 @@
+name: ci
+
+# Compile and EUnit on every push to a branch and every pull request.
+#
+# THIS REPOSITORY HAD NO CI, so its 24 tests had never been run by a machine on
+# a change.
+#
+# rebar3 is the build, and it is now the only one. This fork exists to give
+# shortishly/envy rebar3 and hex packaging, yet it carried upstream's Makefile
+# and a vendored erlang.mk from 2019 that could not run on a current OTP (its
+# dependency generator calls file:pid2name/1, which OTP has removed). Both are
+# removed in the same change that adds this workflow, so there is no second path
+# to drift and no gate that has to pick one. The README says so too.
+#
+# On push and pull request, not dispatch-only: the failure mode being prevented
+# is "nobody remembered to run it", and a gate that only runs when someone
+# remembers preserves exactly that condition.
+#
+# `branches: ['**']` IS LOAD-BEARING. A `push` event fires for tag refs as well,
+# so without it this suite would run a second time on every release tag. `**`
+# matches every branch and excludes tags.
+
+on:
+  push:
+    branches: ['**']
+    paths-ignore: ['**.md']
+  pull_request:
+    paths-ignore: ['**.md']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  OTP_VERSION: '28.4.3'
+  REBAR3_VERSION: '3.27.0'
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: eunit (OTP 28.4.3)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Erlang/OTP and rebar3
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ env.OTP_VERSION }}
+          rebar3-version: ${{ env.REBAR3_VERSION }}
+          version-type: strict
+
+      # The hex cache only. A cached `_build' restores stale beams and rebar3
+      # runs test modules from the build path, so a deleted test keeps running
+      # from its stale beam.
+      - name: Cache hex deps
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/rebar3
+          key: macula-envy-otp${{ env.OTP_VERSION }}-${{ hashFiles('rebar.config', 'src/*.app.src') }}
+          restore-keys: macula-envy-otp${{ env.OTP_VERSION }}-
+
+      - name: Compile
+        run: rebar3 compile
+
+      - name: EUnit
+        run: rebar3 eunit

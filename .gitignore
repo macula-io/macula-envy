@@ -1,8 +1,6 @@
 *.plt
 *~
 .DS_Store
-.erlang.mk
-.erlang.mk.*
 .eunit
 /*.d
 \#*\#
