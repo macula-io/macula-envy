@@ -179,46 +179,14 @@ envy(#{to := To, names := Names, default := Default}) ->
 envy(#{to := To, names := Names}) ->
     ?FUNCTION_NAME(To, Names);
 
-envy(#{default := infinity} = Arg)
-  when not(is_map_key(to, Arg)),
-       not(is_map_key(type, Arg)) ->
-    ?FUNCTION_NAME(Arg#{to => to_integer_or_atom});
-
+%% No `to' and no `type': the conversion follows the default's own type
+%% (inferred_to/1).
 envy(#{default := Default} = Arg)
-  when is_boolean(Default),
+  when (is_atom(Default) orelse is_binary(Default) orelse is_number(Default)
+        orelse is_list(Default)),
        not(is_map_key(to, Arg)),
        not(is_map_key(type, Arg)) ->
-    ?FUNCTION_NAME(Arg#{to => to_boolean});
-
-envy(#{default := Default} = Arg)
-  when is_atom(Default),
-       not(is_map_key(to, Arg)),
-       not(is_map_key(type, Arg)) ->
-    ?FUNCTION_NAME(Arg#{to => to_atom});
-
-envy(#{default := Default} = Arg)
-  when is_binary(Default),
-       not(is_map_key(to, Arg)),
-       not(is_map_key(type, Arg)) ->
-    ?FUNCTION_NAME(Arg#{to => to_binary});
-
-envy(#{default := Default} = Arg)
-  when is_integer(Default),
-       not(is_map_key(to, Arg)),
-       not(is_map_key(type, Arg)) ->
-    ?FUNCTION_NAME(Arg#{to => to_integer});
-
-envy(#{default := Default} = Arg)
-  when is_list(Default),
-       not(is_map_key(to, Arg)),
-       not(is_map_key(type, Arg)) ->
-    ?FUNCTION_NAME(Arg#{to => to_list});
-
-envy(#{default := Default} = Arg)
-  when is_float(Default),
-       not(is_map_key(to, Arg)),
-       not(is_map_key(type, Arg)) ->
-    ?FUNCTION_NAME(Arg#{to => to_float});
+    ?FUNCTION_NAME(Arg#{to => inferred_to(Default)});
 
 envy(#{type := Type} = Arg) when Type == atom;
                                  Type == binary;
@@ -232,6 +200,15 @@ envy(#{type := Type} = Arg) when Type == atom;
        maps:merge(
          #{to => snake_case([to, Type])},
          maps:without([type], Arg))).
+
+%% infinity first: it is an atom, but it reads as an integer or an atom.
+inferred_to(infinity) -> to_integer_or_atom;
+inferred_to(Default) when is_boolean(Default) -> to_boolean;
+inferred_to(Default) when is_atom(Default) -> to_atom;
+inferred_to(Default) when is_binary(Default) -> to_binary;
+inferred_to(Default) when is_integer(Default) -> to_integer;
+inferred_to(Default) when is_list(Default) -> to_list;
+inferred_to(Default) when is_float(Default) -> to_float.
 
 
 envy(To, Names) ->
